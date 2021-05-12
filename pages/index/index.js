@@ -6,7 +6,6 @@ Page({
   },
   onLoad(query) {
     const scene = decodeURIComponent(query.scene)
-    console.log(scene)
     if (scene!="undefined") {
       wx.showModal({
         content: scene,
@@ -40,6 +39,16 @@ Page({
     // })
 
 
+    
+    let options=wx.getLaunchOptionsSync()
+    let scene=options.scene
+    //判断是扫码进来的
+    if(scene==1011||scene==1013||scene==1047||scene==1049){
+      this.onScanIn()
+    }else if(scene==1037){
+      //如果是从别的小程序打开的
+    }
+
   },
 
   scan() {
@@ -53,6 +62,13 @@ Page({
         console.log(res.rawData)
       }
     })
+  },
+  //扫码进来的
+  onScanIn(){
+      let options=wx.getLaunchOptionsSync()
+      //获取小程序码传入的场景参数
+      const scene = decodeURIComponent(options.query.scene)
+      
   }
 
 })
