@@ -4,14 +4,22 @@ Page({
   data: {
 
   },
-  onLoad(query){
+  onLoad(query) {
     const scene = decodeURIComponent(query.scene)
     console.log(scene)
-    wx.showToast({
-      title: scene,
-      icon: 'none',
-      duration:2000
-    }) 
+    if (scene!="undefined") {
+      wx.showModal({
+        content: scene,
+        showCancel: false,
+        success(res) {
+          if (res.confirm) {
+            console.log('用户点击确定')
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
+        }
+      })
+    }
   },
 
   onShow() {
@@ -36,12 +44,13 @@ Page({
 
   scan() {
     wx.scanCode({
-      success (res) {
+      success(res) {
         wx.showToast({
           title: res.rawData,
           icon: 'none',
-          duration:2000
-        }) 
+          duration: 2000
+        })
+        console.log(res.rawData)
       }
     })
   }
