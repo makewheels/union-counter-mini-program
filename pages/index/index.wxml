@@ -1,4 +1,4 @@
 <!--index.wxml-->
 <view class="container">
-  
+  <button bindtap="scan" type="primary">扫一扫</button>
 </view>
