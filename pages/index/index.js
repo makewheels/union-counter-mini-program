@@ -5,41 +5,15 @@ Page({
 
   },
   onLoad(query) {
-    const scene = decodeURIComponent(query.scene)
-    if (scene!="undefined") {
-      wx.showModal({
-        content: scene,
-        showCancel: false,
-        success(res) {
-          if (res.confirm) {
-            console.log('用户点击确定')
-          } else if (res.cancel) {
-            console.log('用户点击取消')
-          }
-        }
+    const queryScene = decodeURIComponent(query.scene)
+    if (queryScene!="undefined") {
+      wx.showToast({
+        title: queryScene,
       })
     }
   },
 
   onShow() {
-    // wx.request({
-    //   url: 'http://10.187.6.175:5010/wechatPay/createOrder?openid=ooJ4W5bJCy6ZtXIsyXbKdxXwoHwI',
-    //   success(res){
-    //     var data = res.data;
-    //     wx.requestPayment({
-    //       timeStamp: data.timeStamp,
-    //       nonceStr: data.nonceStr,
-    //       package: data.package,
-    //       signType: data.signType,
-    //       paySign: data.paySign,
-    //       success(res){},
-    //       fail(res){}
-    //   })
-    //   }
-    // })
-
-
-    
     let options=wx.getLaunchOptionsSync()
     let scene=options.scene
     //判断是扫码进来的
@@ -65,10 +39,53 @@ Page({
   },
   //扫码进来的
   onScanIn(){
-      let options=wx.getLaunchOptionsSync()
-      //获取小程序码传入的场景参数
-      const scene = decodeURIComponent(options.query.scene)
-      
+    let that=this
+    let options=wx.getLaunchOptionsSync()
+    //获取小程序码传入的场景参数
+    const queryScene = decodeURIComponent(options.query.scene)
+    //发请求，搞定路由
+    getApp().post(
+      "/miniProgram/router",
+      {queryScene:queryScene},
+      function(res){
+        let data=res.data
+        //路由：判断版本号
+        if(data.version==1){  
+          //判断cmd
+          if(data.cmd=="pay"){
+            that.createOrder(queryScene)
+          }
+        }
+      }
+    )
+  },
+  //申请支付
+  createOrder(queryScene){
+    let that=this
+    let openid = wx.getStorageSync('openid')
+    getApp().post(
+      '/wechatPay/createOrder',
+      {openid:openid,queryScene:queryScene},
+      function(res){
+        that.doPay(res.data)
+      }
+    )
+  },
+  //支付
+  doPay(data){
+    wx.requestPayment({
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType,
+      paySign: data.paySign,
+      success(res){
+        console.log(res)
+      },
+      fail(res){
+        console.log(res)
+      }
+    })
   }
 
 })
