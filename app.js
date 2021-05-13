@@ -29,8 +29,6 @@ App({
 },
 //公共POST方法
 post(url,data,success){
-  console.log(url)
-  console.log(data)
   wx.request({
     url:"http://10.187.6.50:5010/test-wechat-pay"+url,
     method:'POST',

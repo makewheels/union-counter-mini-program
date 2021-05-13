@@ -64,15 +64,16 @@ Page({
     let that=this
     let openid = wx.getStorageSync('openid')
     getApp().post(
-      '/wechatPay/createOrder',
+      '/miniProgram/requestPay',
       {openid:openid,queryScene:queryScene},
       function(res){
-        that.doPay(res.data)
+        that.doPay(res.data,queryScene)
       }
     )
   },
   //支付
-  doPay(data){
+  doPay(data,queryScene){
+    let that=this
     wx.requestPayment({
       timeStamp: data.timeStamp,
       nonceStr: data.nonceStr,
@@ -80,12 +81,24 @@ Page({
       signType: data.signType,
       paySign: data.paySign,
       success(res){
-        console.log(res)
+        that.onPaySuccess(res,queryScene,data.orderId)
       },
       fail(res){
+        //当支付失败时
         console.log(res)
       }
     })
+  },
+  //当支付成功时
+  onPaySuccess(res,queryScene,orderId){
+    let openid = wx.getStorageSync('openid')
+    getApp().post(
+      '/miniProgram/onPaySuccess',
+      {openid:openid,queryScene:queryScene,orderId:orderId},
+      function(res){
+        console.log(res.data)
+      }
+    )
   }
 
 })
