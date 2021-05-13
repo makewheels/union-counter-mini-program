@@ -13,14 +13,13 @@ App({
       success(res){
         //调用应用服务器登陆，获取openid
         let js_code=res.code
-        wx.request({
-          url: 'http://10.187.10.133:5010/miniProgram/login?js_code='+js_code,
-          success(res){
+        getApp().post(
+          '/miniProgram/login',
+          {js_code:js_code},
+          function(res){
             //保存openid到本地
             wx.setStorageSync('openid', res.data.openid);
-          }
-        })
-
+          })
       }
     })
   }else{
@@ -30,7 +29,8 @@ App({
 //公共POST方法
 post(url,data,success){
   wx.request({
-    url:"http://10.187.6.50:5010/test-wechat-pay"+url,
+    // url:"http://10.187.0.226:5010/test-wechat-pay"+url,
+    url:"https://java8.icu:5010/test-wechat-pay"+url,
     method:'POST',
     header: {
       'content-type': 'application/x-www-form-urlencoded'

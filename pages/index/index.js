@@ -4,14 +4,6 @@ Page({
   data: {
 
   },
-  onLoad(query) {
-    const queryScene = decodeURIComponent(query.scene)
-    if (queryScene!="undefined") {
-      wx.showToast({
-        title: queryScene,
-      })
-    }
-  },
 
   onShow() {
     let options=wx.getLaunchOptionsSync()
@@ -53,14 +45,14 @@ Page({
         if(data.version==1){  
           //判断cmd
           if(data.cmd=="pay"){
-            that.createOrder(queryScene)
+            that.requestPay(queryScene)
           }
         }
       }
     )
   },
   //申请支付
-  createOrder(queryScene){
+  requestPay(queryScene){
     let that=this
     let openid = wx.getStorageSync('openid')
     getApp().post(
